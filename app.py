@@ -21,7 +21,7 @@ def create_app():
     
     # Configuration
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a_secret_key_for_dev_only')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tuta_pamoja.db' 
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tuta_pamodzi.db' 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 
     app.config['UPLOAD_FOLDER'] = 'documents' 
@@ -93,7 +93,7 @@ def initialize_data():
         admin_user = User(
             username=admin_username,
             full_name='Lead Administrator',
-            email='admin@tutapamoja.com',
+            email='admin@highexecellenceacademy.com',
             role=ROLES['Admin']
         )
         admin_user.set_password('supersecurepassword123') 

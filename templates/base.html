@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tuta-Pamoja | {% block title %}{% endblock %}</title>
+    <title>High Execellency Academy | {% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="navbar">
-        <a href="{{ url_for('main.index') }}" class="logo">Tuta-Pamoja 🇿🇲</a>
+        <a href="{{ url_for('main.index') }}" class="logo">High Execellency Academy 🇿🇲</a>
         <div class="nav-links">
             {% if current_user.is_authenticated %}
                 <span class="user-status">Hello, {{ current_user.full_name }} ({{ current_user.role }})</span>
