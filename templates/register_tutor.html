@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Tutor Registration{% endblock %}
+
+{% block content %}
+    <h1>Tutor Registration</h1>
+    <p>Tutors can upload content and manage their students' access and payments.</p>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        
+        <div>
+            {{ form.full_name.label }}
+            {{ form.full_name() }}
+        </div>
+        <div>
+            {{ form.username.label }}
+            {{ form.username() }}
+        </div>
+        <div>
+            {{ form.email.label }}
+            {{ form.email() }}
+        </div>
+        <div>
+            {{ form.password.label }}
+            {{ form.password() }}
+        </div>
+        <div>
+            {{ form.confirm_password.label }}
+            {{ form.confirm_password() }}
+        </div>
+        
+        <div>
+            {{ form.submit() }}
+        </div>
+    </form>
+{% endblock %}

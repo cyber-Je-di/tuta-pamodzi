@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}My Content Access{% endblock %}
+
+{% block content %}
+    <h1>Welcome, {{ current_user.full_name }}!</h1>
+    <h2>Access Authorized Content ({{ current_user.university.name if current_user.university else 'No University Assigned' }})</h2>
+    <p>You currently have **full access** to all available course documents relevant to your university because your profile is approved and your monthly payment has been recorded by your Tutor.</p>
+
+    {% if documents_by_course %}
+        {% for course_name, documents in documents_by_course.items() %}
+            <div style="border: 1px solid #007bff; padding: 15px; margin-bottom: 20px;">
+                <h3>{{ course_name }} ({{ documents|length }} Documents)</h3>
+                <ul>
+                    {% for doc in documents %}
+                        <li>
+                            <p><strong>{{ doc.title }}</strong> - Uploaded by {{ doc.uploader_tutor.full_name }} on {{ doc.upload_date.strftime('%Y-%m-%d') }}</p>
+                            <a href="{{ url_for('main.download_document', document_id=doc.id) }}" class="btn" style="padding: 5px 10px; background-color: green; color: white;">Download</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div style="border: 1px solid orange; padding: 20px; background-color: #fff8e1;">
+            <p>No documents found for your assigned university courses yet. Please check back later or contact your Tutor for uploads.</p>
+        </div>
+    {% endif %}
+
+{% endblock %}

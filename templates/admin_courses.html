@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Courses{% endblock %}
+
+{% block content %}
+    <h1>Manage Courses</h1>
+    
+    <div style="padding: 15px; border: 1px solid #ccc; margin-bottom: 30px;">
+        <h2>Add New Course</h2>
+        <form method="POST" action="">
+            {{ course_form.hidden_tag() }}
+            <div>
+                {{ course_form.category_id.label }}
+                {{ course_form.category_id() }}
+            </div>
+            <div>
+                {{ course_form.code.label }}
+                {{ course_form.code() }}
+            </div>
+            <div>
+                {{ course_form.name.label }}
+                {{ course_form.name() }}
+            </div>
+            <div>
+                {{ course_form.submit() }}
+            </div>
+        </form>
+    </div>
+
+    <h2>Current Courses ({{ courses|length }})</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>University</th>
+                <th>Category</th>
+                <th>Code</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.category.university.name }}</td>
+                <td>{{ course.category.name }}</td>
+                <td><strong>{{ course.code }}</strong></td>
+                <td>{{ course.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

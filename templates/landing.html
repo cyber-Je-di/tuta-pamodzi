@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <h1>Welcome to Tuta-Pamoja! 🇿🇲</h1>
+    <p>Your platform for accessing University course materials provided by certified Tutors.</p>
+    
+    <h2>Featured Universities:</h2>
+    <ul>
+        {% for uni in universities %}
+            <li>{{ uni.name }}</li>
+        {% endfor %}
+    </ul>
+    
+    {% if not current_user.is_authenticated %}
+        <p>Please <a href="{{ url_for('main.login') }}">Log In</a> or <a href="{{ url_for('main.register_choice') }}">Register</a> to get started.</p>
+    {% endif %}
+
+    
+{% endblock %}

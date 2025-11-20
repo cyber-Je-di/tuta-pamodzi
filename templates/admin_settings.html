@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Settings{% endblock %}
+
+{% block content %}
+    <h1>System Settings</h1>
+    
+    <div style="padding: 15px; border: 1px solid #ccc;">
+        <h2>Commission Rate Management (Requirement 1.4.9)</h2>
+        <p>This rate determines the percentage of a Tutor's payment that is retained by the platform.</p>
+        
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.commission_rate.label }}
+                {{ form.commission_rate() }}%
+                {% for error in form.commission_rate.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            <div>
+                {{ form.submit() }}
+            </div>
+        </form>
+    </div>
+{% endblock %}

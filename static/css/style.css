@@ -1,0 +1,380 @@
+/*
+ * Tuta-Pamoja UI/UX: Professional Dark Mode Theme
+ * Aesthetic Focus: Smooth Transitions, Clear Hierarchy, Responsiveness
+ */
+
+/* --- 1. Root Variables & Color Palette --- */
+:root {
+    /* Primary Colors */
+    --color-primary: #5A8DFF;          /* Deep Sapphire Blue (Action/Link) */
+    --color-primary-dark: #4B7AD6;     /* Darker primary for hover */
+    --color-accent: #FFC107;           /* Vibrant Gold/Amber (Highlight, Stars) */
+    
+    /* Background & Surface */
+    --color-bg-dark: #1e1e1e;          /* Main Background: Deep Charcoal */
+    --color-surface-card: #282828;     /* Card/Container Background */
+    --color-surface-alt: #333333;      /* Sidebar/Alternative Surface */
+    --color-border: #444444;           /* Subtle Dividers/Borders */
+    
+    /* Typography */
+    --color-text-main: #FFFFFF;        /* Main Text Color */
+    --color-text-secondary: #AAAAAA;   /* Subtext/Helper Text */
+    
+    /* Status Colors */
+    --color-success: #4CAF50;          /* Green for success */
+    --color-danger: #F44336;           /* Red for errors/denial */
+    --color-info: #00C4FF;             /* Light Blue for info */
+    
+    /* Spacing & Effects */
+    --spacing-base: 20px;
+    --border-radius: 8px;
+    --box-shadow-z1: 0 2px 4px rgba(0, 0, 0, 0.4);
+    --box-shadow-z2: 0 6px 15px rgba(0, 0, 0, 0.6);
+    --transition-speed: 0.3s;
+}
+
+/* --- 2. Global Resets & Typography --- */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-main);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+}
+a:hover {
+    color: var(--color-accent);
+}
+
+h1, h2, h3, h4 {
+    color: var(--color-text-main);
+    font-weight: 600;
+}
+
+/* --- 3. Layout: Navbar & Main Structure --- */
+
+.navbar {
+    background-color: var(--color-surface-alt);
+    padding: 15px var(--spacing-base);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--box-shadow-z1);
+    z-index: 100;
+    position: sticky;
+    top: 0;
+}
+
+.navbar .logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--color-accent);
+    letter-spacing: -0.5px;
+}
+
+.nav-links a {
+    margin-left: var(--spacing-base);
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    color: var(--color-text-main);
+    transition: background-color var(--transition-speed);
+}
+
+.nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-primary);
+}
+
+.user-status span {
+    color: var(--color-text-secondary);
+    margin-right: 15px;
+}
+
+/* Main Dashboard Layout (for Admin/Tutor/Student) */
+.dashboard-layout {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: var(--color-surface-alt);
+    padding: var(--spacing-base) 0;
+    min-height: calc(100vh - 60px); /* Adjust based on navbar height */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-nav a {
+    display: block;
+    padding: 12px var(--spacing-base);
+    color: var(--color-text-secondary);
+    border-left: 3px solid transparent;
+    transition: all var(--transition-speed);
+}
+
+.sidebar-nav a:hover {
+    color: var(--color-text-main);
+    background-color: rgba(90, 141, 255, 0.1);
+}
+
+.sidebar-nav a.active {
+    color: var(--color-primary);
+    border-left: 3px solid var(--color-primary);
+    background-color: rgba(90, 141, 255, 0.15);
+    font-weight: 600;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: var(--spacing-base);
+    animation: fadeIn var(--transition-speed) ease-out;
+}
+
+/* --- 4. Components: Cards, Forms, Buttons --- */
+
+.card {
+    background-color: var(--color-surface-card);
+    padding: var(--spacing-base);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-z2);
+    margin-bottom: var(--spacing-base);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+/* Subtle hover for interactive elements like listing cards */
+.card:hover.interactive {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7);
+}
+
+
+/* Input Fields */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    font-size: 0.9em;
+}
+
+input[type="text"], input[type="password"], input[type="email"], select, textarea, input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    background-color: #333333; /* Darker input background for contrast */
+    color: var(--color-text-main);
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+    font-size: 1em;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(90, 141, 255, 0.2);
+    outline: none;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary, input[type="submit"] {
+    background-color: var(--color-primary);
+    color: var(--color-text-main);
+}
+.btn-primary:hover, input[type="submit"]:hover {
+    background-color: var(--color-primary-dark);
+    transform: translateY(-1px);
+}
+.btn-primary:active, input[type="submit"]:active {
+    transform: translateY(1px);
+}
+
+.btn-secondary {
+    background-color: var(--color-surface-alt);
+    color: var(--color-text-main);
+    border: 1px solid var(--color-border);
+}
+.btn-secondary:hover {
+    background-color: #444444;
+}
+
+.btn-success {
+    background-color: var(--color-success);
+}
+.btn-success:hover {
+    background-color: #3e8e41;
+}
+
+/* Flash Messages */
+.flash {
+    padding: 15px;
+    margin-bottom: var(--spacing-base);
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    animation: slideDown var(--transition-speed) ease-out;
+}
+.flash.success {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: var(--color-success);
+    border: 1px solid var(--color-success);
+}
+.flash.danger {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger);
+}
+.flash.info {
+    background-color: rgba(0, 196, 255, 0.2);
+    color: var(--color-info);
+    border: 1px solid var(--color-info);
+}
+
+/* --- 5. Data Visualization: Tables & Stats --- */
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-base);
+    margin-bottom: var(--spacing-base);
+}
+
+.stat-card {
+    padding: var(--spacing-base);
+    border-radius: var(--border-radius);
+    background-color: var(--color-surface-card);
+    box-shadow: var(--box-shadow-z1);
+    text-align: center;
+    border-top: 5px solid var(--color-primary);
+}
+.stat-card h3 {
+    color: var(--color-text-secondary);
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+.stat-card .value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    transition: color 0.2s;
+}
+.stat-card:hover .value {
+    color: var(--color-accent);
+}
+
+table {
+    width: 100%;
+    border-collapse: separate; /* Use separate for rounded corners */
+    border-spacing: 0;
+    background-color: var(--color-surface-card);
+    border-radius: var(--border-radius);
+    overflow: hidden; /* Ensures borders/shadows contain content */
+    box-shadow: var(--box-shadow-z2);
+}
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #333333;
+}
+th {
+    background-color: var(--color-surface-alt);
+    color: var(--color-text-main);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+}
+tbody tr:hover {
+    background-color: #333333;
+    transition: background-color var(--transition-speed);
+}
+/* Remove bottom border from last row */
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* --- 6. Utility & Animations --- */
+
+/* Utility for Flex Columns */
+.flex-columns {
+    display: flex;
+    gap: var(--spacing-base);
+}
+.flex-columns > * {
+    flex: 1;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .nav-links {
+        margin-top: 10px;
+    }
+    .nav-links a {
+        margin-left: 0;
+        margin-right: 15px;
+    }
+    .dashboard-layout {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+        padding: 0;
+        box-shadow: none;
+        border-bottom: 1px solid var(--color-border);
+    }
+    .sidebar-nav {
+        display: flex;
+        overflow-x: auto;
+        padding: 0 var(--spacing-base);
+    }
+    .sidebar-nav a {
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        flex-shrink: 0;
+    }
+    .sidebar-nav a.active {
+        border-bottom: 3px solid var(--color-primary);
+        border-left: none;
+    }
+    .flex-columns {
+        flex-direction: column;
+    }
+}

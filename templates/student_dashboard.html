@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+    <h1>Student Dashboard: {{ current_user.full_name }}!</h1>
+    
+    <h2>Access Status:</h2>
+    <p>Your current university: <strong>{{ current_user.university.name }}</strong></p>
+    <p>Your assigned Tutor: <strong>{{ current_user.assigned_tutor.full_name if current_user.assigned_tutor else "N/A" }}</strong></p>
+    
+    {% if current_user.is_content_authorized() %}
+        <div class="flash success">
+            <p style="color: green; font-size: 1.2em;">✅ **{{ access_status }}** You have access to course materials!</p>
+            
+            <p>Go to: <a href="{{ url_for('main.student_content') }}" class="btn" style="background-color: #007bff; color: white;">View Course Materials</a></p>
+            
+            {% if current_user.tutor_id %}
+                <p style="margin-top: 20px;">
+                    How is your assigned Tutor performing? 
+                    <a href="{{ url_for('main.review_tutor', tutor_id=current_user.tutor_id) }}" class="btn" style="background-color: purple; color: white;">
+                        Leave a Review
+                    </a>
+                </p>
+            {% endif %}
+
+        </div>
+    {% else %}
+        <div class="flash danger">
+            <p style="color: red; font-size: 1.2em;">❌ **{{ access_status }}** You do not currently have access to materials.</p>
+            <ul>
+                {% if not current_user.is_approved %}
+                <li>Status: **Pending Tutor Approval** (Contact your tutor, {{ current_user.assigned_tutor.full_name if current_user.assigned_tutor else "N/A" }})</li>
+                {% endif %}
+                {% if not current_user.is_paid_current_month %}
+                <li>Status: **Pending Monthly Payment** (Contact your tutor to record payment)</li>
+                {% endif %}
+            </ul>
+        </div>
+    {% endif %}
+
+{% endblock %}

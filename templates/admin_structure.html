@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Structure{% endblock %}
+
+{% block content %}
+    <h1>Manage Universities & Categories</h1>
+    
+    <div style="display: flex; gap: 40px;">
+        
+        {# --- ADD UNIVERSITY FORM --- #}
+        <div style="flex: 1; padding: 15px; border: 1px solid #ccc;">
+            <h2>Add New University</h2>
+            <form method="POST" action="">
+                {{ uni_form.hidden_tag() }}
+                <div>
+                    {{ uni_form.name.label }}
+                    {{ uni_form.name() }}
+                </div>
+                <div>
+                    {{ uni_form.submit_uni() }}
+                </div>
+            </form>
+        </div>
+        
+        {# --- ADD CATEGORY FORM --- #}
+        <div style="flex: 1; padding: 15px; border: 1px solid #ccc;">
+            <h2>Add New Category (School/Faculty)</h2>
+            <form method="POST" action="">
+                {{ cat_form.hidden_tag() }}
+                <div>
+                    {{ cat_form.university_id.label }}
+                    {{ cat_form.university_id() }}
+                </div>
+                <div>
+                    {{ cat_form.name.label }}
+                    {{ cat_form.name() }}
+                </div>
+                <div>
+                    {{ cat_form.submit_cat() }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h2 style="margin-top: 30px;">Current Structure</h2>
+    {% for uni in universities %}
+        <h3>{{ uni.name }} ({{ uni.categories|length }} Categories)</h3>
+        <ul>
+        {% for cat in uni.categories %}
+            <li>{{ cat.name }} ({{ cat.courses|length }} Courses)</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    
+{% endblock %}

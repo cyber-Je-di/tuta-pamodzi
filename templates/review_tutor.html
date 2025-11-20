@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Review Tutor{% endblock %}
+
+{% block content %}
+    <h1>Review Tutor: {{ tutor.full_name }}</h1>
+    <p>Your honest feedback helps us maintain high quality tutoring. You may only submit one review for your assigned tutor.</p>
+    
+    <div style="padding: 15px; border: 1px solid #ccc; max-width: 600px;">
+        <form method="POST" action="{{ url_for('main.review_tutor', tutor_id=tutor.id) }}">
+            {{ form.hidden_tag() }}
+            {{ form.tutor_id() }} <h3 style="margin-top: 20px;">Overall Rating (Required)</h3>
+            <div>
+                {{ form.rating.label }}
+                {{ form.rating() }}
+            </div>
+
+            <h3 style="margin-top: 20px;">Questionnaire Scores (1-5)</h3>
+            
+            <div>
+                {{ form.content_clear_score.label }}
+                {{ form.content_clear_score() }}
+            </div>
+            
+            <div>
+                {{ form.tutor_responsive_score.label }}
+                {{ form.tutor_responsive_score() }}
+            </div>
+            
+            <h3 style="margin-top: 20px;">Detailed Feedback (Optional)</h3>
+            <div>
+                {{ form.review_text.label }}
+                {{ form.review_text(rows=5) }}
+            </div>
+            
+            <div style="margin-top: 20px;">
+                {{ form.submit(class_="btn", style="background-color: #28a745; color: white;") }}
+                <a href="{{ url_for('main.student_content') }}" class="btn" style="background-color: #6c757d; color: white;">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

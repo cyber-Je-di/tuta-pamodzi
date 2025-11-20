@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Student Registration{% endblock %}
+
+{% block content %}
+    <h1>Student Registration</h1>
+    <p>Your account will be **pending** until your assigned Tutor approves you and records your first monthly payment.</p>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        
+        <div>
+            {{ form.tutor_id.label }}
+            {{ form.tutor_id() }}
+            {% for error in form.tutor_id.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </div>
+        
+        <div>
+            {{ form.university_id.label }}
+            {{ form.university_id() }}
+        </div>
+        
+        <div>
+            {{ form.full_name.label }}
+            {{ form.full_name() }}
+        </div>
+        <div>
+            {{ form.username.label }}
+            {{ form.username() }}
+        </div>
+        <div>
+            {{ form.email.label }}
+            {{ form.email() }}
+        </div>
+        <div>
+            {{ form.password.label }}
+            {{ form.password() }}
+        </div>
+        <div>
+            {{ form.confirm_password.label }}
+            {{ form.confirm_password() }}
+        </div>
+        
+        <div>
+            {{ form.submit() }}
+        </div>
+    </form>
+{% endblock %}
