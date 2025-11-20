@@ -3,47 +3,58 @@
 {% block title %}Student Registration{% endblock %}
 
 {% block content %}
-    <h1>Student Registration</h1>
-    <p>Your account will be **pending** until your assigned Tutor approves you and records your first monthly payment.</p>
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        
-        <div>
-            {{ form.tutor_id.label }}
-            {{ form.tutor_id() }}
-            {% for error in form.tutor_id.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        
-        <div>
-            {{ form.university_id.label }}
-            {{ form.university_id() }}
-        </div>
-        
-        <div>
-            {{ form.full_name.label }}
-            {{ form.full_name() }}
-        </div>
-        <div>
-            {{ form.username.label }}
-            {{ form.username() }}
-        </div>
-        <div>
-            {{ form.email.label }}
-            {{ form.email() }}
-        </div>
-        <div>
-            {{ form.password.label }}
-            {{ form.password() }}
-        </div>
-        <div>
-            {{ form.confirm_password.label }}
-            {{ form.confirm_password() }}
-        </div>
-        
-        <div>
-            {{ form.submit() }}
-        </div>
-    </form>
+    <div class="card" style="max-width: 600px; margin: 20px auto; padding: 30px;">
+        <h1 style="text-align: center; color: var(--color-primary);">New Student Account</h1>
+        <p class="flash info" style="font-size: 0.9em; text-align: center;">
+            <strong style="color: var(--color-info);">IMPORTANT:</strong> Your access will be **pending** until your chosen Tutor approves you and records your first payment.
+        </p>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            
+            <div class="flex-columns" style="margin-bottom: 20px;">
+                <div>
+                    {{ form.tutor_id.label }}
+                    {{ form.tutor_id(class_='input-field') }}
+                    {% for error in form.tutor_id.errors %}
+                        <span class="flash danger" style="padding: 5px; display: block; margin-top: 5px;">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <div>
+                    {{ form.university_id.label }}
+                    {{ form.university_id(class_='input-field') }}
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                {{ form.full_name.label }}
+                {{ form.full_name(placeholder='e.g., Jane Lungu') }}
+            </div>
+            
+            <div class="flex-columns" style="margin-bottom: 20px;">
+                <div>
+                    {{ form.username.label }}
+                    {{ form.username(placeholder='Unique Username') }}
+                </div>
+                <div>
+                    {{ form.email.label }}
+                    {{ form.email(placeholder='Valid Email Address') }}
+                </div>
+            </div>
+            
+            <div class="flex-columns" style="margin-bottom: 30px;">
+                <div>
+                    {{ form.password.label }}
+                    {{ form.password(placeholder='Secure Password') }}
+                </div>
+                <div>
+                    {{ form.confirm_password.label }}
+                    {{ form.confirm_password(placeholder='Confirm Password') }}
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                {{ form.submit(class_='btn btn-primary', style='width: 100%;') }}
+            </div>
+        </form>
+    </div>
 {% endblock %}

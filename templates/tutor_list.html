@@ -4,11 +4,11 @@
 
 {% block content %}
     <h1>Available Tutors (Performance Ranking)</h1>
-    <p>View the aggregated performance scores based on student reviews.</p>
+    <p style="color: var(--color-text-secondary);">View the aggregated performance scores based on student reviews.</p>
 
-    <table style="width: 100%; border-collapse: collapse;">
+    <table>
         <thead>
-            <tr style="background-color: #007bff; color: white;">
+            <tr>
                 <th>Tutor Name</th>
                 <th>Overall Rating</th>
                 <th>Total Reviews</th>
@@ -17,18 +17,18 @@
         </thead>
         <tbody>
             {% for user, avg_rating, total_reviews in tutors_with_stats %}
-            <tr style="border-bottom: 1px solid #ddd;">
+            <tr>
                 <td><strong>{{ user.full_name }}</strong></td>
                 <td>
                     {% if total_reviews > 0 %}
-                        <strong style="color: gold;">{{ "%.2f"|format(avg_rating) }} / 5</strong>
+                        <strong style="color: var(--color-accent);">{{ "%.2f"|format(avg_rating) }} / 5</strong>
                     {% else %}
-                        No Rating
+                        <span style="color: var(--color-text-secondary);">No Rating</span>
                     {% endif %}
                 </td>
                 <td>{{ total_reviews }}</td>
                 <td>
-                    <a href="{{ url_for('main.view_tutor_profile', tutor_id=user.id) }}" class="btn" style="background-color: #28a745; color: white; padding: 5px 10px;">View Profile</a>
+                    <a href="{{ url_for('main.view_tutor_profile', tutor_id=user.id) }}" class="btn btn-success" style="padding: 8px 15px;">View Profile</a>
                 </td>
             </tr>
             {% endfor %}

@@ -3,24 +3,44 @@
 {% block title %}Manage Settings{% endblock %}
 
 {% block content %}
-    <h1>System Settings</h1>
-    
-    <div style="padding: 15px; border: 1px solid #ccc;">
-        <h2>Commission Rate Management (Requirement 1.4.9)</h2>
-        <p>This rate determines the percentage of a Tutor's payment that is retained by the platform.</p>
-        
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}
-            <div>
-                {{ form.commission_rate.label }}
-                {{ form.commission_rate() }}%
-                {% for error in form.commission_rate.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
+    <div class="dashboard-layout">
+        <div class="sidebar">
+            <div class="sidebar-nav">
+                <a href="{{ url_for('admin.dashboard') }}">📊 Dashboard Overview</a>
+                <a href="{{ url_for('admin.manage_structure') }}">🏛️ Manage Structure</a>
+                <a href="{{ url_for('admin.manage_courses') }}">📚 Manage Courses</a>
+                <a href="{{ url_for('admin.manage_settings') }}" class="active">⚙️ System Settings</a>
+                <a href="#">👤 User Management (WIP)</a>
             </div>
-            <div>
-                {{ form.submit() }}
+        </div>
+
+        <div class="main-content">
+            <h1>System Settings</h1>
+            
+            <div class="card" style="max-width: 600px; padding: 30px;">
+                <h2 style="color: var(--color-accent); margin-top: 0;">Commission Rate Management</h2>
+                <p style="color: var(--color-text-secondary); margin-bottom: 20px;">
+                    This rate determines the percentage of a Tutor's payment that is retained by the platform (Requirement 1.4.9).
+                </p>
+                
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <div style="margin-bottom: 25px;">
+                        {{ form.commission_rate.label }}
+                        <div style="display: flex; align-items: center;">
+                             {{ form.commission_rate(style='width: 100px; margin-right: 10px; text-align: right; font-size: 1.2em;') }}
+                             <span style="font-size: 1.5em; font-weight: bold; color: var(--color-accent);">%</span>
+                        </div>
+                       
+                        {% for error in form.commission_rate.errors %}
+                            <span class="flash danger" style="padding: 5px; display: block; margin-top: 10px; font-size: 0.9em;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                    <div>
+                        {{ form.submit(class_='btn btn-success', style='width: 100%;') }}
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 {% endblock %}

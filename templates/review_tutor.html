@@ -3,39 +3,47 @@
 {% block title %}Review Tutor{% endblock %}
 
 {% block content %}
-    <h1>Review Tutor: {{ tutor.full_name }}</h1>
-    <p>Your honest feedback helps us maintain high quality tutoring. You may only submit one review for your assigned tutor.</p>
-    
-    <div style="padding: 15px; border: 1px solid #ccc; max-width: 600px;">
+    <div class="card" style="max-width: 600px; margin: 20px auto; padding: 30px; border-left: 5px solid var(--color-accent);">
+        <h1>Review Tutor: {{ tutor.full_name }} ⭐</h1>
+        <p style="color: var(--color-text-secondary); margin-bottom: 30px;">
+            Your honest feedback helps us maintain high quality tutoring. You may only submit one review for your assigned tutor.
+        </p>
+        
         <form method="POST" action="{{ url_for('main.review_tutor', tutor_id=tutor.id) }}">
             {{ form.hidden_tag() }}
-            {{ form.tutor_id() }} <h3 style="margin-top: 20px;">Overall Rating (Required)</h3>
-            <div>
-                {{ form.rating.label }}
-                {{ form.rating() }}
+            {{ form.tutor_id() }} 
+            
+            <div class="card" style="background-color: #333333; margin-bottom: 25px;">
+                <h3 style="margin-top: 0; color: var(--color-accent);">Overall Tutor Rating (Required)</h3>
+                <div>
+                    {{ form.rating.label }}
+                    {{ form.rating() }}
+                </div>
             </div>
 
-            <h3 style="margin-top: 20px;">Questionnaire Scores (1-5)</h3>
+            <h3 style="color: var(--color-primary); margin-top: 30px;">Specific Performance Scores (1-5)</h3>
             
-            <div>
-                {{ form.content_clear_score.label }}
-                {{ form.content_clear_score() }}
+            <div class="flex-columns">
+                <div style="margin-bottom: 15px;">
+                    {{ form.content_clear_score.label }}
+                    {{ form.content_clear_score() }}
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    {{ form.tutor_responsive_score.label }}
+                    {{ form.tutor_responsive_score() }}
+                </div>
             </div>
             
-            <div>
-                {{ form.tutor_responsive_score.label }}
-                {{ form.tutor_responsive_score() }}
-            </div>
-            
-            <h3 style="margin-top: 20px;">Detailed Feedback (Optional)</h3>
-            <div>
+            <h3 style="color: var(--color-primary); margin-top: 30px;">Detailed Feedback (Optional)</h3>
+            <div style="margin-bottom: 30px;">
                 {{ form.review_text.label }}
-                {{ form.review_text(rows=5) }}
+                {{ form.review_text(rows=5, placeholder='Tell us what worked well or what could be improved.') }}
             </div>
             
-            <div style="margin-top: 20px;">
-                {{ form.submit(class_="btn", style="background-color: #28a745; color: white;") }}
-                <a href="{{ url_for('main.student_content') }}" class="btn" style="background-color: #6c757d; color: white;">Cancel</a>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                {{ form.submit(class_='btn btn-success') }}
+                <a href="{{ url_for('main.student_dashboard') }}" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>

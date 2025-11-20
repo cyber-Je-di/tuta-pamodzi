@@ -3,28 +3,28 @@
 {% block title %}Access Denied{% endblock %}
 
 {% block content %}
-    <div style="border: 2px solid red; padding: 30px; margin-top: 50px; text-align: center; background-color: #ffebee;">
+    <div class="card" style="border: 2px solid var(--color-danger); padding: 30px; margin-top: 50px; text-align: center; background-color: rgba(244, 67, 54, 0.1);">
         <h1>🛑 Content Access Denied 🛑</h1>
-        <p style="font-size: 1.2em;">You cannot access the content yet due to the following required steps:</p>
+        <p style="font-size: 1.1em; color: var(--color-text-secondary);">You cannot access the content yet due to the following required steps:</p>
 
-        <ul style="list-style-type: none; padding: 0; font-size: 1.1em;">
-            <li style="margin: 10px 0;">
+        <ul style="list-style-type: none; padding: 0; font-size: 1em; margin-top: 30px; text-align: left; max-width: 400px; margin: 30px auto;">
+            <li style="margin: 15px 0; border-bottom: 1px dashed var(--color-border); padding-bottom: 10px;">
                 {% if current_user.is_approved %}
-                    ✅ Profile Approved by Tutor.
+                    <span style="color: var(--color-success); font-weight: bold;">✅ Step 1: Profile Approved by Tutor.</span>
                 {% else %}
-                    ❌ **Step 1: Get Approved.** Your Tutor (**{{ current_user.assigned_tutor.full_name if current_user.assigned_tutor else 'N/A' }}**) must approve your profile on their dashboard.
+                    <span style="color: var(--color-danger); font-weight: bold;">❌ Step 1: Get Approved.</span> Your Tutor (**{{ current_user.assigned_tutor.full_name if current_user.assigned_tutor else 'N/A' }}**) must approve your profile on their dashboard.
                 {% endif %}
             </li>
-            <li style="margin: 10px 0;">
+            <li style="margin: 15px 0;">
                 {% if current_user.is_paid_current_month %}
-                    ✅ Monthly Payment Recorded by Tutor.
+                    <span style="color: var(--color-success); font-weight: bold;">✅ Step 2: Monthly Payment Recorded by Tutor.</span>
                 {% else %}
-                    ❌ **Step 2: Submit Payment.** Your Tutor must record your current monthly payment on their dashboard.
+                    <span style="color: var(--color-danger); font-weight: bold;">❌ Step 2: Submit Payment.</span> Your Tutor must record your current monthly payment on their dashboard.
                 {% endif %}
             </li>
         </ul>
 
-        <p style="margin-top: 25px;">Please contact your assigned Tutor, **{{ current_user.assigned_tutor.full_name if current_user.assigned_tutor else 'N/A' }}**, to complete your registration and activate your access.</p>
-        <a href="{{ url_for('main.index') }}" class="btn" style="margin-top: 20px; background-color: #007bff;">Return to Home</a>
+        <p style="margin-top: 25px; font-size: 1.1em;">Please contact your assigned Tutor, **{{ current_user.assigned_tutor.full_name if current_user.assigned_tutor else 'N/A' }}**, to complete your registration and activate your access.</p>
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary" style="margin-top: 20px;">Return to Home</a>
     </div>
 {% endblock %}

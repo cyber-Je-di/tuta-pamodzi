@@ -4,16 +4,16 @@
 
 {% block content %}
     <h1>Upload Course Document</h1>
-    <p>Upload lecture notes, assignments, or past papers into the appropriate University and Course category.</p>
+    <p style="color: var(--color-text-secondary);">Upload lecture notes, assignments, or past papers into the appropriate University and Course category.</p>
     
     <form method="POST" action="{{ url_for('tutor.upload_document') }}" enctype="multipart/form-data">
         
-        <div>
+        <div style="margin-bottom: 15px;">
             <label for="title">Document Title</label>
             <input type="text" id="title" name="title" required>
         </div>
         
-        <div>
+        <div style="margin-bottom: 15px;">
             <label for="course_id">Select Course Category (University -> Category -> Course)</label>
             <select id="course_id" name="course_id" required>
                 <option value="0">--- Select Course ---</option>
@@ -23,28 +23,28 @@
                 {% for course in course_structure %}
                     {% if course.category.university_id != current_university_id %}
                         {% if not loop.first %}</optgroup>{% endif %}
-                        <optgroup label="{{ course.category.university.name }}">
+                        <optgroup label="🌐 {{ course.category.university.name }}" style="background-color: var(--color-surface-alt);">
                         {% set current_university_id = course.category.university_id %}
                     {% endif %}
                     
                     {% if course.category_id != current_category_id %}
-                        <option value="" disabled style="font-weight: bold; background-color: #eee;">&nbsp;&nbsp;&nbsp;-- {{ course.category.name }} --</option>
+                        <option value="" disabled style="font-weight: bold; background-color: var(--color-surface-card); color: var(--color-primary);">&nbsp;&nbsp;&nbsp;-- {{ course.category.name }} --</option>
                         {% set current_category_id = course.category_id %}
                     {% endif %}
                     
-                    <option value="{{ course.id }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ course.name }}</option>
+                    <option value="{{ course.id }}" style="background-color: #383838;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ course.name }}</option>
                 {% endfor %}
                 {% if course_structure %}</optgroup>{% endif %}
             </select>
         </div>
         
-        <div>
+        <div style="margin-bottom: 25px;">
             <label for="file">Select File (PDF, DOC, DOCX)</label>
             <input type="file" id="file" name="file" accept=".pdf, .doc, .docx" required>
         </div>
         
         <div>
-            <input type="submit" value="Upload Document" style="background-color: #007bff;">
+            <input type="submit" value="Upload Document" class="btn btn-primary">
         </div>
     </form>
 {% endblock %}

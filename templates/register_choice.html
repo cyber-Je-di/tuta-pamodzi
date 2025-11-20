@@ -3,11 +3,25 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-    <h1>Choose Registration Type</h1>
-    <p>Are you a student looking for resources, or a tutor providing them?</p>
-    
-    <a href="{{ url_for('main.register_student') }}" class="btn">Register as Student</a>
-    <a href="{{ url_for('main.register_tutor') }}" class="btn">Register as Tutor</a>
-    
-    <p style="margin-top: 20px;">Already have an account? <a href="{{ url_for('main.login') }}">Log In</a>.</p>
+    <div class="card" style="max-width: 700px; margin: 40px auto; padding: 40px; text-align: center;">
+        <h1 style="color: var(--color-primary);">Choose Your Role</h1>
+        <p style="color: var(--color-text-secondary); margin-bottom: 40px; font-size: 1.1rem;">
+            Are you joining to learn or to teach?
+        </p>
+        
+        <div class="flex-columns">
+            <a href="{{ url_for('main.register_student') }}" class="card btn btn-success interactive" style="flex-direction: column; padding: 30px; border-top: 5px solid var(--color-success);">
+                <span style="font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">Student 🎓</span>
+                <span style="font-size: 0.9rem; font-weight: 400; text-transform: none;">Access materials and get a dedicated tutor.</span>
+            </a>
+            <a href="{{ url_for('main.register_tutor') }}" class="card btn btn-info interactive" style="flex-direction: column; padding: 30px; border-top: 5px solid var(--color-info);">
+                <span style="font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;">Tutor 🧑‍🏫</span>
+                <span style="font-size: 0.9rem; font-weight: 400; text-transform: none;">Share knowledge and manage your student base.</span>
+            </a>
+        </div>
+        
+        <p style="margin-top: 30px; color: var(--color-text-secondary);">
+            Already have an account? <a href="{{ url_for('main.login') }}" style="color: var(--color-primary);">Log In</a>.
+        </p>
+    </div>
 {% endblock %}

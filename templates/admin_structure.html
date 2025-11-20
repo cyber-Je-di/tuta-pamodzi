@@ -3,53 +3,71 @@
 {% block title %}Manage Structure{% endblock %}
 
 {% block content %}
-    <h1>Manage Universities & Categories</h1>
-    
-    <div style="display: flex; gap: 40px;">
-        
-        {# --- ADD UNIVERSITY FORM --- #}
-        <div style="flex: 1; padding: 15px; border: 1px solid #ccc;">
-            <h2>Add New University</h2>
-            <form method="POST" action="">
-                {{ uni_form.hidden_tag() }}
-                <div>
-                    {{ uni_form.name.label }}
-                    {{ uni_form.name() }}
-                </div>
-                <div>
-                    {{ uni_form.submit_uni() }}
-                </div>
-            </form>
+    <div class="dashboard-layout">
+        <div class="sidebar">
+            <div class="sidebar-nav">
+                <a href="{{ url_for('admin.dashboard') }}">📊 Dashboard Overview</a>
+                <a href="{{ url_for('admin.manage_structure') }}" class="active">🏛️ Manage Structure</a>
+                <a href="{{ url_for('admin.manage_courses') }}">📚 Manage Courses</a>
+                <a href="{{ url_for('admin.manage_settings') }}">⚙️ System Settings</a>
+                <a href="#">👤 User Management (WIP)</a>
+            </div>
         </div>
-        
-        {# --- ADD CATEGORY FORM --- #}
-        <div style="flex: 1; padding: 15px; border: 1px solid #ccc;">
-            <h2>Add New Category (School/Faculty)</h2>
-            <form method="POST" action="">
-                {{ cat_form.hidden_tag() }}
-                <div>
-                    {{ cat_form.university_id.label }}
-                    {{ cat_form.university_id() }}
+
+        <div class="main-content">
+            <h1>Manage Universities & Categories</h1>
+            
+            <div class="flex-columns" style="margin-bottom: 40px;">
+                
+                <div class="card">
+                    <h2 style="color: var(--color-primary); margin-top: 0;">Add University</h2>
+                    <form method="POST" action="">
+                        {{ uni_form.hidden_tag() }}
+                        <div style="margin-bottom: 15px;">
+                            {{ uni_form.name.label }}
+                            {{ uni_form.name(placeholder='e.g., University of Zambia') }}
+                        </div>
+                        <div>
+                            {{ uni_form.submit_uni(class_='btn btn-primary', style='width: 100%;') }}
+                        </div>
+                    </form>
                 </div>
-                <div>
-                    {{ cat_form.name.label }}
-                    {{ cat_form.name() }}
+                
+                <div class="card">
+                    <h2 style="color: var(--color-primary); margin-top: 0;">Add Category (School/Faculty)</h2>
+                    <form method="POST" action="">
+                        {{ cat_form.hidden_tag() }}
+                        <div style="margin-bottom: 15px;">
+                            {{ cat_form.university_id.label }}
+                            {{ cat_form.university_id() }}
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            {{ cat_form.name.label }}
+                            {{ cat_form.name(placeholder='e.g., School of Mines') }}
+                        </div>
+                        <div>
+                            {{ cat_form.submit_cat(class_='btn btn-primary', style='width: 100%;') }}
+                        </div>
+                    </form>
                 </div>
-                <div>
-                    {{ cat_form.submit_cat() }}
-                </div>
-            </form>
+            </div>
+
+            <h2>Current Academic Structure</h2>
+            <div class="card" style="padding: 25px;">
+                {% for uni in universities %}
+                    <div style="margin-bottom: 20px; border-left: 3px solid var(--color-accent); padding-left: 15px;">
+                        <h3 style="color: var(--color-accent); margin-bottom: 5px;">{{ uni.name }} <span style="font-size: 0.9em; color: var(--color-text-secondary);">({{ uni.categories|length }} Categories)</span></h3>
+                        <ul style="list-style-type: disc; padding-left: 20px; color: var(--color-text-secondary);">
+                        {% for cat in uni.categories %}
+                            <li style="margin-bottom: 5px;">
+                                {{ cat.name }} 
+                                <span style="font-style: italic; font-size: 0.9em;"> ({{ cat.courses|length }} Courses)</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
-
-    <h2 style="margin-top: 30px;">Current Structure</h2>
-    {% for uni in universities %}
-        <h3>{{ uni.name }} ({{ uni.categories|length }} Categories)</h3>
-        <ul>
-        {% for cat in uni.categories %}
-            <li>{{ cat.name }} ({{ cat.courses|length }} Courses)</li>
-        {% endfor %}
-        </ul>
-    {% endfor %}
-    
 {% endblock %}

@@ -3,34 +3,44 @@
 {% block title %}Tutor Registration{% endblock %}
 
 {% block content %}
-    <h1>Tutor Registration</h1>
-    <p>Tutors can upload content and manage their students' access and payments.</p>
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        
-        <div>
-            {{ form.full_name.label }}
-            {{ form.full_name() }}
-        </div>
-        <div>
-            {{ form.username.label }}
-            {{ form.username() }}
-        </div>
-        <div>
-            {{ form.email.label }}
-            {{ form.email() }}
-        </div>
-        <div>
-            {{ form.password.label }}
-            {{ form.password() }}
-        </div>
-        <div>
-            {{ form.confirm_password.label }}
-            {{ form.confirm_password() }}
-        </div>
-        
-        <div>
-            {{ form.submit() }}
-        </div>
-    </form>
+    <div class="card" style="max-width: 600px; margin: 20px auto; padding: 30px;">
+        <h1 style="text-align: center; color: var(--color-info);">New Tutor Account</h1>
+        <p style="text-align: center; color: var(--color-text-secondary); margin-bottom: 30px;">
+            Complete the form to start sharing your expertise and managing your students.
+        </p>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            
+            <div style="margin-bottom: 20px;">
+                {{ form.full_name.label }}
+                {{ form.full_name(placeholder='Your Full Name') }}
+            </div>
+            
+            <div class="flex-columns" style="margin-bottom: 20px;">
+                <div>
+                    {{ form.username.label }}
+                    {{ form.username(placeholder='Unique Username') }}
+                </div>
+                <div>
+                    {{ form.email.label }}
+                    {{ form.email(placeholder='Valid Email Address') }}
+                </div>
+            </div>
+            
+            <div class="flex-columns" style="margin-bottom: 30px;">
+                <div>
+                    {{ form.password.label }}
+                    {{ form.password(placeholder='Secure Password') }}
+                </div>
+                <div>
+                    {{ form.confirm_password.label }}
+                    {{ form.confirm_password(placeholder='Confirm Password') }}
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                {{ form.submit(class_='btn btn-info', style='width: 100%;') }}
+            </div>
+        </form>
+    </div>
 {% endblock %}

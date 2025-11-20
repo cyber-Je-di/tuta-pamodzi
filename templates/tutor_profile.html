@@ -5,31 +5,31 @@
 {% block content %}
     <h1>Tutor Profile: {{ tutor.full_name }}</h1>
     
-    <div style="display: flex; gap: 20px; margin-bottom: 30px;">
-        <div style="flex: 1; border: 1px solid #007bff; padding: 20px; background-color: #e6f0ff;">
+    <div class="flex-columns" style="margin-bottom: 30px;">
+        <div class="card" style="border-left: 5px solid var(--color-primary);">
             <h2>Performance Overview</h2>
             {% if review_stats and review_stats.total_reviews > 0 %}
                 <p><strong>Overall Rating:</strong> 
-                    <strong style="color: gold; font-size: 1.5em;">{{ "%.2f"|format(review_stats.avg_rating) }} / 5</strong>
+                    <strong style="color: var(--color-accent); font-size: 1.5em;">{{ "%.2f"|format(review_stats.avg_rating) }} / 5</strong>
                     ({{ review_stats.total_reviews }} Reviews)
                 </p>
-                <p>Content Clarity Average: <strong>{{ "%.2f"|format(review_stats.avg_content_clear) }}</strong> / 5</p>
-                <p>Responsiveness Average: <strong>{{ "%.2f"|format(review_stats.avg_responsive) }}</strong> / 5</p>
+                <p>Content Clarity Average: <strong style="color: var(--color-primary);">{{ "%.2f"|format(review_stats.avg_content_clear) }}</strong> / 5</p>
+                <p>Responsiveness Average: <strong style="color: var(--color-primary);">{{ "%.2f"|format(review_stats.avg_responsive) }}</strong> / 5</p>
             {% else %}
-                <p>No reviews submitted for this tutor yet.</p>
+                <p style="color: var(--color-text-secondary);">No reviews submitted for this tutor yet.</p>
             {% endif %}
             
-            <p style="margin-top: 15px;">Total Students Assigned: <strong>{{ total_students }}</strong></p>
+            <p style="margin-top: 15px;">Total Students Assigned: <strong style="font-size: 1.1em;">{{ total_students }}</strong></p>
         </div>
         
-        <div style="flex: 1; border: 1px solid #ccc; padding: 20px;">
+        <div class="card">
             <h2>Tutor Information</h2>
-            <p>Email: {{ tutor.email }}</p>
-            <p>Role: {{ tutor.role }}</p>
-            <p>Joined: {{ tutor.created_at.strftime('%Y-%m-%d') }}</p>
-            <p style="margin-top: 15px;">
+            <p>Email: <span style="color: var(--color-text-secondary);">{{ tutor.email }}</span></p>
+            <p>Role: <span style="color: var(--color-primary);">{{ tutor.role }}</span></p>
+            <p>Joined: <span style="color: var(--color-text-secondary);">{{ tutor.created_at.strftime('%Y-%m-%d') }}</span></p>
+            <p style="margin-top: 25px;">
                 {% if current_user.is_authenticated and current_user.role == 'Student' and current_user.tutor_id == tutor.id %}
-                    <a href="{{ url_for('main.review_tutor', tutor_id=tutor.id) }}" class="btn" style="background-color: purple; color: white;">Leave Your Review</a>
+                    <a href="{{ url_for('main.review_tutor', tutor_id=tutor.id) }}" class="btn" style="background-color: #9C27B0; color: white;">Leave Your Review</a>
                 {% endif %}
             </p>
         </div>
@@ -38,21 +38,21 @@
     <h2>Detailed Student Reviews</h2>
     {% if reviews %}
         {% for review in reviews %}
-            <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px;">
-                <p><strong>Overall Rating: {{ review.rating }} / 5</strong></p>
+            <div class="card" style="padding: 15px; margin-bottom: 10px; border-left: 3px solid var(--color-accent);">
+                <p><strong>Overall Rating: <span style="color: var(--color-accent);">{{ review.rating }} / 5</span></strong></p>
                 {% if review.review_text %}
-                    <p style="font-style: italic;">"{{ review.review_text }}"</p>
+                    <blockquote style="font-style: italic; border-left: 3px solid var(--color-text-secondary); padding-left: 10px; margin: 10px 0; color: var(--color-text-secondary);">"{{ review.review_text }}"</blockquote>
                 {% endif %}
-                <p style="font-size: 0.9em; color: #666;">
+                <p style="font-size: 0.9em; color: var(--color-text-secondary);">
                     Submitted by: {{ review.reviewer.full_name }} on {{ review.review_date.strftime('%Y-%m-%d') }}
                 </p>
-                <ul style="list-style-type: none; padding: 0; font-size: 0.9em; margin-top: 5px;">
-                    <li>Content Clarity: {{ review.content_clear_score }} / 5</li>
-                    <li>Tutor Responsiveness: {{ review.tutor_responsive_score }} / 5</li>
+                <ul style="list-style-type: none; padding: 0; font-size: 0.9em; margin-top: 10px; color: var(--color-text-secondary);">
+                    <li>Content Clarity: <strong style="color: var(--color-text-main);">{{ review.content_clear_score }}</strong> / 5</li>
+                    <li>Tutor Responsiveness: <strong style="color: var(--color-text-main);">{{ review.tutor_responsive_score }}</strong> / 5</li>
                 </ul>
             </div>
         {% endfor %}
     {% else %}
-        <p>No detailed reviews available yet.</p>
+        <p style="color: var(--color-text-secondary);">No detailed reviews available yet.</p>
     {% endif %}
 {% endblock %}

@@ -5,59 +5,59 @@
 {% block content %}
     <h1>Tutor Dashboard: {{ current_user.full_name }}</h1>
     
-    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-        <div style="border: 1px solid #ccc; padding: 15px; flex: 1;">
+    <div class="flex-columns" style="margin-bottom: 20px;">
+        <div class="card">
             <h2>Statistics</h2>
-            <p>Total Assigned Students: <strong>{{ total_students }}</strong></p>
-            <p>Students Pending Approval: <strong style="color: orange;">{{ pending_approval }}</strong></p>
-            <p>Paid/Active Students (Current Month): <strong style="color: green;">{{ active_students }}</strong></p>
-            <p>Monthly Revenue Recorded: <strong>ZMW {{ "%.2f"|format(monthly_revenue) }}</strong></p>
+            <p>Total Assigned Students: <strong style="color: var(--color-primary); font-size: 1.1em;">{{ total_students }}</strong></p>
+            <p>Students Pending Approval: <strong style="color: orange; font-size: 1.1em;">{{ pending_approval }}</strong></p>
+            <p>Paid/Active Students (Current Month): <strong style="color: var(--color-success); font-size: 1.1em;">{{ active_students }}</strong></p>
+            <p>Monthly Revenue Recorded: <strong><span style="color: var(--color-accent);">ZMW {{ "%.2f"|format(monthly_revenue) }}</span></strong></p>
         </div>
         
-        <div style="border: 1px solid #007bff; padding: 15px; flex: 1; background-color: #e6f0ff;">
+        <div class="card" style="border-left: 5px solid var(--color-primary);">
             <h2>Content Management</h2>
-            <p>Upload documents for your students' courses.</p>
-            <a href="{{ url_for('tutor.upload_document') }}" class="btn">Go to Document Uploader</a>
+            <p style="color: var(--color-text-secondary);">Upload documents for your students' courses.</p>
+            <a href="{{ url_for('tutor.upload_document') }}" class="btn btn-primary" style="margin-top: 10px;">Go to Document Uploader</a>
         </div>
     </div>
     
     <h2 style="margin-top: 30px;">My Reviews & Performance</h2>
     
-    <div style="display: flex; gap: 20px; margin-bottom: 30px;">
-        <div style="border: 1px solid #ccc; padding: 15px; flex: 1;">
+    <div class="flex-columns" style="margin-bottom: 30px;">
+        <div class="card">
             <h3>Aggregated Scores ({{ review_stats.total_reviews if review_stats else 0 }} Reviews)</h3>
             {% if review_stats and review_stats.total_reviews > 0 %}
                 <p>Overall Rating: 
-                    <strong style="color: gold; font-size: 1.2em;">
+                    <strong style="color: var(--color-accent); font-size: 1.2em;">
                         {{ "%.2f"|format(review_stats.avg_rating) }} / 5
                     </strong>
                 </p>
-                <p>Content Clarity Score: <strong>{{ "%.2f"|format(review_stats.avg_content_clear) }}</strong> / 5</p>
-                <p>Tutor Responsiveness Score: <strong>{{ "%.2f"|format(review_stats.avg_responsive) }}</strong> / 5</p>
+                <p>Content Clarity Score: <strong style="color: var(--color-primary);">{{ "%.2f"|format(review_stats.avg_content_clear) }}</strong> / 5</p>
+                <p>Tutor Responsiveness Score: <strong style="color: var(--color-primary);">{{ "%.2f"|format(review_stats.avg_responsive) }}</strong> / 5</p>
             {% else %}
-                <p>No reviews submitted yet.</p>
+                <p style="color: var(--color-text-secondary);">No reviews submitted yet.</p>
             {% endif %}
         </div>
         
-        <div style="border: 1px solid #007bff; padding: 15px; flex: 1;">
+        <div class="card">
             <h3>Latest Student Feedback (Top 5)</h3>
             {% if latest_reviews %}
                 <ul style="list-style: none; padding: 0;">
                     {% for review in latest_reviews %}
-                        <li style="border-bottom: 1px dotted #eee; padding-bottom: 10px; margin-bottom: 10px;">
+                        <li style="border-bottom: 1px dotted var(--color-border); padding-bottom: 10px; margin-bottom: 10px;">
                             <p style="margin: 0;">
-                                <strong>{{ review.rating }} / 5</strong> from 
+                                <strong style="color: var(--color-accent);">{{ review.rating }} / 5</strong> from 
                                 <span style="font-style: italic;">{{ review.reviewer.full_name }}</span> 
-                                <span style="font-size: 0.8em; color: #666;">({{ review.review_date.strftime('%Y-%m-%d') }})</span>
+                                <span style="font-size: 0.8em; color: var(--color-text-secondary);">({{ review.review_date.strftime('%Y-%m-%d') }})</span>
                             </p>
                             {% if review.review_text %}
-                                <p style="font-style: italic; margin-top: 5px; color: #333;">"{{ review.review_text|truncate(80) }}"</p>
+                                <p style="font-style: italic; margin-top: 5px; color: var(--color-text-main);">"{{ review.review_text|truncate(80) }}"</p>
                             {% endif %}
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <p>No recent reviews to display.</p>
+                <p style="color: var(--color-text-secondary);">No recent reviews to display.</p>
             {% endif %}
         </div>
     </div>
@@ -80,40 +80,40 @@
                     {{ student.full_name }}
                     <small>
                         {% if student.is_content_authorized() %}
-                            <a href="{{ url_for('main.review_tutor', tutor_id=current_user.id) }}" style="color: purple;">(Remind Student to Review)</a>
+                            <a href="{{ url_for('main.review_tutor', tutor_id=current_user.id) }}" style="color: #9C27B0;">(Remind Student to Review)</a>
                         {% endif %}
                     </small>
                 </td>
                 <td>{{ student.university.name if student.university else 'N/A' }}</td>
                 <td>
                     {% if student.is_approved %}
-                        <span style="color: green;">Approved</span>
+                        <span style="color: var(--color-success); font-weight: bold;">Approved</span>
                     {% else %}
-                        <span style="color: orange;">Pending</span>
+                        <span style="color: orange; font-weight: bold;">Pending</span>
                     {% endif %}
                 </td>
                 <td>
                     {% if student.is_paid_current_month %}
-                        <span style="color: green;">Active/Paid</span>
+                        <span style="color: var(--color-success); font-weight: bold;">Active/Paid</span>
                     {% else %}
-                        <span style="color: red;">Unpaid</span>
+                        <span style="color: var(--color-danger); font-weight: bold;">Unpaid</span>
                     {% endif %}
                 </td>
                 <td>
                     {% if not student.is_approved %}
                         {# Approval Action (Req 1.3.6 - Status 1) #}
                         <form method="POST" action="{{ url_for('tutor.approve_student', student_id=student.id) }}" style="display: inline;">
-                            <input type="submit" value="Approve" style="background-color: orange; color: white;">
+                            <input type="submit" value="Approve" class="btn" style="background-color: orange; color: white; padding: 8px 15px;">
                         </form>
                     {% elif not student.is_paid_current_month %}
                         {# Payment Action (Req 1.3.6 - Status 2 & Req 1.3.8) #}
                         <form method="POST" action="{{ url_for('tutor.record_payment', student_id=student.id) }}" style="display: inline;">
-                            <label for="fee_{{ student.id }}">Fee:</label>
-                            <input type="number" step="0.01" name="fee_amount" id="fee_{{ student.id }}" required style="width: 80px;">
-                            <input type="submit" value="Record Payment" style="background-color: green; color: white;">
+                            <label for="fee_{{ student.id }}" style="display: inline; margin-right: 5px;">Fee:</label>
+                            <input type="number" step="0.01" name="fee_amount" id="fee_{{ student.id }}" required style="width: 80px; display: inline; padding: 5px;">
+                            <input type="submit" value="Record Payment" class="btn btn-success" style="padding: 8px 15px;">
                         </form>
                     {% else %}
-                        <span>Access Granted</span>
+                        <span style="color: var(--color-text-secondary);">Access Granted</span>
                     {% endif %}
                 </td>
             </tr>

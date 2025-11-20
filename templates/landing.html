@@ -3,19 +3,40 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <h1>Welcome to Tuta-Pamoja! 🇿🇲</h1>
-    <p>Your platform for accessing University course materials provided by certified Tutors.</p>
-    
-    <h2>Featured Universities:</h2>
-    <ul>
+    <div class="card" style="text-align: center; padding: 60px 40px; border-top: 5px solid var(--color-accent);">
+        <h1 style="font-size: 3rem; margin-bottom: 10px; color: var(--color-primary);">
+            Tuta-Pamoja 🇿🇲: Empowering Zambian Education
+        </h1>
+        <p style="font-size: 1.4rem; color: var(--color-text-secondary); max-width: 800px; margin: 0 auto 30px;">
+            Seamless access to University course materials and personalized, top-rated tutoring. Study smarter, together.
+        </p>
+        
+        {% if not current_user.is_authenticated %}
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 30px;">
+                <a href="{{ url_for('main.register_choice') }}" class="btn btn-primary" style="padding: 15px 35px; font-size: 1.1rem;">
+                    Get Started Now
+                </a>
+                <a href="{{ url_for('main.list_tutors') }}" class="btn btn-secondary" style="padding: 15px 35px; font-size: 1.1rem;">
+                    Find a Tutor
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <h2 style="text-align: center; margin-top: 40px;">Featured Institutions</h2>
+    <div class="stat-grid">
         {% for uni in universities %}
-            <li>{{ uni.name }}</li>
+            <div class="card interactive" style="border-left: 5px solid var(--color-accent); text-align: center;">
+                <h3 style="margin-bottom: 5px; color: var(--color-primary);">{{ uni.name }}</h3>
+                <p style="color: var(--color-text-secondary); font-size: 0.9em;">Materials available</p>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
     
     {% if not current_user.is_authenticated %}
-        <p>Please <a href="{{ url_for('main.login') }}">Log In</a> or <a href="{{ url_for('main.register_choice') }}">Register</a> to get started.</p>
+        <p style="margin-top: 40px; text-align: center; color: var(--color-text-secondary);">
+            Already a member? <a href="{{ url_for('main.login') }}">Log In Here</a>.
+        </p>
     {% endif %}
-
     
 {% endblock %}
