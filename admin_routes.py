@@ -11,7 +11,18 @@ admin = Blueprint('admin', __name__, url_prefix='/admin')
 
 # --- Custom Decorator for Admin Access Control ---
 def admin_required(f):
-    """Decorator to restrict access only to users with the 'Admin' role."""
+    """Ensure a user is logged in and has the 'Admin' role.
+
+    This decorator is used to protect routes that should only be accessible
+    to administrators. If the current user is not authenticated or does not
+    have the 'Admin' role, they are redirected to the main index page.
+
+    Args:
+        f (function): The view function to decorate.
+
+    Returns:
+        function: The decorated view function.
+    """
     @login_required
     def decorated_function(*args, **kwargs):
         if current_user.role != ROLES['Admin']:
@@ -26,6 +37,15 @@ def admin_required(f):
 @admin.route('/dashboard')
 @admin_required
 def dashboard():
+    """Render the admin dashboard.
+
+    This page displays a high-level overview of the platform, including
+    statistics on the total number of users, tutors, students, and courses.
+    It also shows the current system-wide commission rate.
+
+    Returns:
+        str: The rendered HTML template for the admin dashboard.
+    """
     # Fetch data summaries for the dashboard
     total_users = User.query.count()
     total_tutors = User.query.filter_by(role=ROLES['Tutor']).count()
@@ -47,6 +67,18 @@ def dashboard():
 @admin.route('/structure', methods=['GET', 'POST'])
 @admin_required
 def manage_structure():
+    """Manage the academic structure of the platform (universities and categories).
+
+    This route provides a single interface for administrators to add new
+    universities and new categories associated with those universities. It
+    displays the existing structure and handles the submission of forms for
+    creating new entries.
+
+    Returns:
+        werkzeug.wrappers.Response: A rendered template for the structure
+                                    management page or a redirect after a
+                                    form submission.
+    """
     # Setup Forms
     uni_form = UniversityForm()
     cat_form = CategoryForm()
@@ -94,6 +126,17 @@ def manage_structure():
 @admin.route('/courses', methods=['GET', 'POST'])
 @admin_required
 def manage_courses():
+    """Manage the courses available on the platform.
+
+    This page allows administrators to add new courses to the various
+    categories. It displays a list of all existing courses and provides a
+    form for creating new ones.
+
+    Returns:
+        werkzeug.wrappers.Response: A rendered template for the course
+                                    management page or a redirect after a
+                                    form submission.
+    """
     course_form = CourseForm()
     
     # Populate choices dynamically
@@ -128,6 +171,17 @@ def manage_courses():
 @admin.route('/settings', methods=['GET', 'POST'])
 @admin_required
 def manage_settings():
+    """Manage system-wide settings.
+
+    Currently, this page allows the administrator to set the commission rate
+    for tutor payments. It displays a form with the current rate and handles
+    the submission of the updated value.
+
+    Returns:
+        werkzeug.wrappers.Response: A rendered template for the settings
+                                    page or a redirect after updating the
+                                    settings.
+    """
     setting = db.session.get(SystemSetting, 1)
     form = SystemSettingForm(obj=setting) # Populate form with current object data
 

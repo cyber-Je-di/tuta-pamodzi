@@ -13,7 +13,18 @@ tutor = Blueprint('tutor', __name__, url_prefix='/tutor')
 
 # --- Custom Decorator for Role Access Control (Requirement 1.1) ---
 def tutor_required(f):
-    """Decorator to restrict access only to users with the 'Tutor' role."""
+    """Ensure a user is logged in and has the 'Tutor' role.
+
+    This decorator is used to protect routes that should only be accessible
+    to tutors. If the current user is not authenticated or does not have the
+    'Tutor' role, they are redirected to the main index page.
+
+    Args:
+        f (function): The view function to decorate.
+
+    Returns:
+        function: The decorated view function.
+    """
     @login_required
     def decorated_function(*args, **kwargs):
         if current_user.role != ROLES['Tutor']:
@@ -28,6 +39,15 @@ def tutor_required(f):
 @tutor.route('/dashboard')
 @tutor_required
 def dashboard():
+    """Render the tutor's dashboard.
+
+    This page provides an overview of the tutor's activities, including a
+    list of their assigned students, statistics about student status,
+    monthly revenue, and aggregated review scores.
+
+    Returns:
+        str: The rendered HTML template for the tutor dashboard.
+    """
     # Fetch students assigned to the current tutor (Requirement 1.3.7)
     assigned_students = User.query.filter_by(tutor_id=current_user.id).order_by(User.full_name).all()
     
@@ -74,6 +94,18 @@ def dashboard():
 @tutor.route('/student/<int:student_id>/approve', methods=['POST'])
 @tutor_required
 def approve_student(student_id):
+    """Approve a student's registration.
+
+    This route is called when a tutor approves a student who has registered
+    under them. It updates the student's `is_approved` status to True.
+    Access is restricted to the tutor assigned to the student.
+
+    Args:
+        student_id (int): The ID of the student to be approved.
+
+    Returns:
+        werkzeug.wrappers.Response: A redirect to the tutor's dashboard.
+    """
     student = db.session.get(User, student_id)
     
     # Security check: Ensure the tutor only manages their assigned students (Req 1.3.7)
@@ -90,6 +122,20 @@ def approve_student(student_id):
 @tutor.route('/student/<int:student_id>/record_payment', methods=['POST'])
 @tutor_required
 def record_payment(student_id):
+    """Record a payment for a student.
+
+    This function allows a tutor to record a payment received from one of
+    their students. It creates a new `Payment` record and updates the
+    student's `is_paid_current_month` status, granting them access to
+    course content.
+
+    Args:
+        student_id (int): The ID of the student for whom the payment is
+                          being recorded.
+
+    Returns:
+        werkzeug.wrappers.Response: A redirect to the tutor's dashboard.
+    """
     student = db.session.get(User, student_id)
     fee_amount = request.form.get('fee_amount', type=float)
     
@@ -129,6 +175,16 @@ def record_payment(student_id):
 @tutor.route('/upload', methods=['GET', 'POST'])
 @tutor_required
 def upload_document():
+    """Handle the document upload process for tutors.
+
+    This route displays a form for tutors to upload documents for the courses
+    they teach. It processes the form submission, saves the file to the
+    server, and creates a new `Document` record in the database.
+
+    Returns:
+        werkzeug.wrappers.Response: A rendered template for the upload page
+                                    or a redirect upon successful upload.
+    """
     # Get the course structure for the dropdowns
     course_structure = Course.query.join(Category).join(University).order_by(University.name, Category.name, Course.name).all()
 

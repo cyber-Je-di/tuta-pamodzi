@@ -13,11 +13,21 @@ main = Blueprint('main', __name__)
 
 # --- UTILITY FUNCTIONS (MOVED HERE TO ENSURE APP CONTEXT) ---
 def get_tutors():
-    """Fetches Tutors for the SelectField choices."""
+    """Fetch a list of all tutors for populating form select fields.
+
+    Returns:
+        list[tuple]: A list of tuples, where each tuple contains the ID and
+                     full name of a tutor.
+    """
     return [(t.id, t.full_name) for t in User.query.filter_by(role=ROLES['Tutor']).all()]
 
 def get_universities():
-    """Fetches Universities for the SelectField choices."""
+    """Fetch a list of all universities for populating form select fields.
+
+    Returns:
+        list[tuple]: A list of tuples, where each tuple contains the ID and
+                     name of a university.
+    """
     return [(u.id, u.name) for u in University.query.all()]
 # -------------------------------------------------------------
 
@@ -25,6 +35,17 @@ def get_universities():
 @main.route('/')
 @main.route('/home')
 def index():
+    """Render the main landing page or redirect to the user's dashboard.
+
+    If the user is authenticated, they are redirected to the appropriate
+    dashboard based on their role (Admin, Tutor, or Student). Otherwise,
+    the public landing page is rendered, showing a list of universities.
+
+    Returns:
+        werkzeug.wrappers.Response: A redirect response for authenticated
+                                    users or a rendered template for
+                                    anonymous users.
+    """
     if current_user.is_authenticated:
         # Redirect based on role if logged in
         if current_user.role == ROLES['Admin']:
@@ -41,6 +62,17 @@ def index():
 ## --- LOGIN ---
 @main.route('/login', methods=['GET', 'POST'])
 def login():
+    """Handle user login.
+
+    Displays the login form and processes user authentication. If the user
+    is already authenticated, they are redirected to the main index page.
+    On successful login, the user is redirected to their dashboard.
+
+    Returns:
+        werkzeug.wrappers.Response: A rendered template for the login page
+                                    or a redirect response on successful
+                                    authentication.
+    """
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     
@@ -62,11 +94,31 @@ def login():
 ## --- REGISTRATION ---
 @main.route('/register', methods=['GET', 'POST'])
 def register_choice():
+    """Display a page for users to choose their registration type.
+
+    This route renders a simple page that allows a new user to select
+    whether they want to register as a Student or a Tutor.
+
+    Returns:
+        str: The rendered HTML template for the registration choice page.
+    """
     # Simple page to choose between Student and Tutor registration
     return render_template('register_choice.html')
 
 @main.route('/register/student', methods=['GET', 'POST'])
 def register_student():
+    """Handle the registration process for new students.
+
+    Displays the student registration form and processes the form submission.
+    It populates the form's select fields with available tutors and
+    universities. On successful registration, a new student user is created
+    in the database, and they are redirected to the login page.
+
+    Returns:
+        werkzeug.wrappers.Response: The rendered template for the student
+                                    registration page or a redirect to the
+                                    login page upon success.
+    """
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
 
@@ -105,6 +157,17 @@ def register_student():
 
 @main.route('/register/tutor', methods=['GET', 'POST'])
 def register_tutor():
+    """Handle the registration process for new tutors.
+
+    Displays the tutor registration form and processes the form submission.
+    On successful registration, a new tutor user is created in the database,
+    and they are redirected to the login page.
+
+    Returns:
+        werkzeug.wrappers.Response: The rendered template for the tutor
+                                    registration page or a redirect to the
+                                    login page upon success.
+    """
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
         
@@ -130,6 +193,14 @@ def register_tutor():
 @main.route('/logout')
 @login_required
 def logout():
+    """Log out the currently authenticated user.
+
+    The user's session is cleared, and they are redirected to the main
+    landing page.
+
+    Returns:
+        werkzeug.wrappers.Response: A redirect response to the landing page.
+    """
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('main.index'))
@@ -138,6 +209,17 @@ def logout():
 @main.route('/student/dashboard')
 @login_required
 def student_dashboard():
+    """Render the student's dashboard.
+
+    This page provides an overview for the student, including their current
+    access status for viewing course content. Access is restricted to users
+    with the 'Student' role.
+
+    Returns:
+        werkzeug.wrappers.Response: A rendered template for the student
+                                    dashboard or a redirect if access is
+                                    denied.
+    """
     # Enforce student role access
     if current_user.role != ROLES['Student']:
         flash('Access denied.', 'danger')
@@ -152,6 +234,19 @@ def student_dashboard():
 @main.route('/student/content')
 @login_required
 def student_content():
+    """Display educational content available to the student.
+
+    This route checks if the student is authorized to view content (i.e.,
+    approved by their tutor and has a current payment). If authorized, it
+    fetches and displays all documents related to the courses at the
+    student's university.
+
+    Returns:
+        werkzeug.wrappers.Response: A rendered template displaying the
+                                    course materials, an access denied page,
+                                    or a redirect if the user is not a
+                                    student.
+    """
     if current_user.role != ROLES['Student']:
         flash('Access denied. This page is only for students.', 'danger')
         return redirect(url_for('main.index'))
@@ -190,6 +285,22 @@ def student_content():
 @main.route('/download/<int:document_id>')
 @login_required
 def download_document(document_id):
+    """Provide a download link for a specific document.
+
+    This route allows an authorized student to download a document file. It
+    performs several security checks:
+    1. Ensures the user is a student.
+    2. Verifies the student is authorized to access content.
+    3. Confirms the requested document belongs to the student's university.
+
+    Args:
+        document_id (int): The ID of the document to be downloaded.
+
+    Returns:
+        werkzeug.wrappers.Response: A file download response or a redirect
+                                    if access is denied or the file is
+                                    not found.
+    """
     if current_user.role != ROLES['Student']:
         flash('Access denied.', 'danger')
         return redirect(url_for('main.index'))
@@ -241,6 +352,20 @@ def download_document(document_id):
 @main.route('/review_tutor/<int:tutor_id>', methods=['GET', 'POST'])
 @login_required
 def review_tutor(tutor_id):
+    """Handle the process for a student to review their tutor.
+
+    This route displays a form for a student to submit a review for their
+    assigned tutor. It includes checks to ensure that only the assigned
+    student can submit a review and that they can only do so once.
+
+    Args:
+        tutor_id (int): The ID of the tutor being reviewed.
+
+    Returns:
+        werkzeug.wrappers.Response: The rendered template for the review
+                                    form or a redirect upon successful
+                                    submission or if access is denied.
+    """
     # 1. Role Check
     if current_user.role != ROLES['Student']:
         flash('Access denied. Only students can review tutors.', 'danger')
@@ -288,6 +413,15 @@ def review_tutor(tutor_id):
 
 @main.route('/tutors')
 def list_tutors():
+    """Display a public list of all tutors with aggregated review stats.
+
+    This page is accessible to anyone and shows a ranked list of all tutors
+    on the platform. Tutors are ranked by their average rating and the total
+    number of reviews they have received.
+
+    Returns:
+        str: The rendered HTML template for the tutor list page.
+    """
     # Fetch all Tutors and their aggregated review statistics in one query (Req 1.5.18)
     tutors_with_stats = db.session.query(
         User,
@@ -307,6 +441,20 @@ def list_tutors():
 
 @main.route('/tutor/<int:tutor_id>')
 def view_tutor_profile(tutor_id):
+    """Display the public profile of a specific tutor.
+
+    This page shows detailed information about a single tutor, including their
+    name, aggregated review statistics, and a list of all reviews they have
+    received.
+
+    Args:
+        tutor_id (int): The ID of the tutor whose profile is to be viewed.
+
+    Returns:
+        werkzeug.wrappers.Response: A rendered template of the tutor's
+                                    profile or a redirect if the tutor is
+                                    not found.
+    """
     tutor = db.session.get(User, tutor_id)
 
     if not tutor or tutor.role != ROLES['Tutor']:
