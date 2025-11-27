@@ -16,6 +16,17 @@ ROLES = {
 # ----------------------------------------------------------------------
 
 class SystemSetting(db.Model):
+    """Represents system-wide settings for the application.
+
+    This model stores configuration values that can be adjusted by an
+    administrator, such as the commission rate for tutor payments.
+
+    Attributes:
+        id (int): The primary key for the setting.
+        commission_rate (float): The percentage of tutor earnings that is
+                                 taken as a commission.
+        last_updated (datetime): The timestamp of the last update.
+    """
     __tablename__ = 'SystemSettings'
     id = db.Column(db.Integer, primary_key=True)
     # Defines the Admin's commission rate (e.g., 0.10 for 10%) - Requirement 1.4.9
@@ -27,6 +38,25 @@ class SystemSetting(db.Model):
 # ----------------------------------------------------------------------
 
 class User(UserMixin, db.Model):
+    """Represents a user of the application.
+
+    This model is used for all three user roles: Admin, Tutor, and Student.
+    It includes authentication fields, personal information, and relationships
+    to other models.
+
+    Attributes:
+        id (int): Primary key.
+        username (str): The user's unique username.
+        password_hash (str): The hashed password for the user.
+        email (str): The user's unique email address.
+        full_name (str): The user's full name.
+        role (str): The user's role, one of 'Admin', 'Tutor', or 'Student'.
+        tutor_id (int): Foreign key linking a student to their tutor.
+        university_id (int): Foreign key linking a student to their university.
+        is_approved (bool): A flag indicating if a student is approved by a tutor.
+        is_paid_current_month (bool): A flag indicating if a student has paid for the current month.
+        created_at (datetime): The timestamp when the user was created.
+    """
     __tablename__ = 'Users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -56,13 +86,37 @@ class User(UserMixin, db.Model):
     
     
     def set_password(self, password):
+        """Set the user's password to a hashed value.
+
+        Args:
+            password (str): The plaintext password to be hashed.
+        """
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
+        """Check if a given password matches the user's hashed password.
+
+        Args:
+            password (str): The plaintext password to check.
+
+        Returns:
+            bool: True if the password is correct, False otherwise.
+        """
         return check_password_hash(self.password_hash, password)
         
     def is_content_authorized(self):
-        """Checks if a student can access content (Two-Step Gating)"""
+        """Check if a student is authorized to access course content.
+
+        Authorization for students requires two conditions to be met:
+        1. The student must be approved by their tutor (`is_approved`).
+        2. The student must have a recorded payment for the current month
+           (`is_paid_current_month`).
+
+        Admins and Tutors are always considered authorized.
+
+        Returns:
+            bool: True if the user is authorized, False otherwise.
+        """
         if self.role == ROLES['Student']:
             # Access granted only if BOTH approved AND paid (Requirement 1.3.6)
             return self.is_approved and self.is_paid_current_month
@@ -73,12 +127,29 @@ class User(UserMixin, db.Model):
 # ----------------------------------------------------------------------
 
 class University(db.Model, UserMixin):
+    """Represents an academic institution.
+
+    Each university can have multiple categories of courses.
+
+    Attributes:
+        id (int): Primary key.
+        name (str): The unique name of the university.
+    """
     __tablename__ = 'Universities'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     categories = db.relationship('Category', backref='university', lazy=True)
 
 class Category(db.Model):
+    """Represents a category of courses within a university.
+
+    Examples include 'School of Engineering' or 'School of Humanities'.
+
+    Attributes:
+        id (int): Primary key.
+        university_id (int): Foreign key linking to the parent university.
+        name (str): The name of the category.
+    """
     __tablename__ = 'Categories'
     id = db.Column(db.Integer, primary_key=True)
     university_id = db.Column(db.Integer, db.ForeignKey('Universities.id'), nullable=False)
@@ -88,6 +159,14 @@ class Category(db.Model):
     __table_args__ = (db.UniqueConstraint('university_id', 'name'),) # Ensure unique category names per university
 
 class Course(db.Model):
+    """Represents a single course within a category.
+
+    Attributes:
+        id (int): Primary key.
+        category_id (int): Foreign key linking to the parent category.
+        name (str): The name of the course (e.g., 'Introduction to Python').
+        code (str): The unique code for the course (e.g., 'CS101').
+    """
     __tablename__ = 'Courses'
     id = db.Column(db.Integer, primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey('Categories.id'), nullable=False)
@@ -101,6 +180,16 @@ class Course(db.Model):
 # ----------------------------------------------------------------------
 
 class Document(db.Model):
+    """Represents a document uploaded by a tutor for a specific course.
+
+    Attributes:
+        id (int): Primary key.
+        title (str): The title of the document.
+        file_path (str): The path to the document file on the server.
+        course_id (int): Foreign key linking to the associated course.
+        uploader_tutor_id (int): Foreign key linking to the tutor who uploaded it.
+        upload_date (datetime): The timestamp of the upload.
+    """
     __tablename__ = 'Documents'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
@@ -114,6 +203,16 @@ class Document(db.Model):
 # ----------------------------------------------------------------------
 
 class Payment(db.Model):
+    """Represents a payment recorded by a tutor for a student.
+
+    Attributes:
+        id (int): Primary key.
+        student_id (int): Foreign key for the student who made the payment.
+        tutor_id (int): Foreign key for the tutor who received the payment.
+        amount (float): The total amount of the payment.
+        payment_date (date): The date the payment was made.
+        commission_amount (float): The portion of the payment taken as commission.
+    """
     __tablename__ = 'Payments'
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
@@ -127,6 +226,18 @@ class Payment(db.Model):
 # ----------------------------------------------------------------------
 
 class TutorReview(db.Model):
+    """Represents a review of a tutor submitted by a student.
+
+    Attributes:
+        id (int): Primary key.
+        tutor_id (int): Foreign key for the tutor being reviewed.
+        student_id (int): Foreign key for the student who wrote the review.
+        rating (int): The overall rating from 1 to 5.
+        review_text (str): The optional text of the review.
+        content_clear_score (int): A 1-5 rating for content clarity.
+        tutor_responsive_score (int): A 1-5 rating for tutor responsiveness.
+        review_date (datetime): The timestamp when the review was submitted.
+    """
     __tablename__ = 'TutorReviews'
     id = db.Column(db.Integer, primary_key=True)
     tutor_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
