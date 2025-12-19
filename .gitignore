@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+
+# Instance Folder
+instance/
+
+# Log files
+*.log
+
+# Virtual Environment
+venv/
+.venv/

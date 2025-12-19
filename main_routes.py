@@ -49,9 +49,11 @@ def index():
     if current_user.is_authenticated:
         # Redirect based on role if logged in
         if current_user.role == ROLES['Admin']:
-            return redirect(url_for('admin.dashboard')) # Will be created later
+            return redirect(url_for('admin.dashboard'))
+        elif current_user.role == ROLES['Lead Tutor']:
+            return redirect(url_for('lead_tutor.dashboard'))
         elif current_user.role == ROLES['Tutor']:
-            return redirect(url_for('tutor.dashboard')) # Will be created later
+            return redirect(url_for('tutor.dashboard'))
         else: # Student
             return redirect(url_for('main.student_dashboard'))
     
@@ -177,14 +179,15 @@ def register_tutor():
             username=form.username.data,
             email=form.email.data,
             full_name=form.full_name.data,
-            role=ROLES['Tutor']
+            role=ROLES['Tutor'],
+            tutor_status='pending' # Tutors must be approved
         )
         new_tutor.set_password(form.password.data)
         
         db.session.add(new_tutor)
         db.session.commit()
         
-        flash('Tutor registration successful. You can now log in and start uploading content!', 'success')
+        flash('Registration successful! Your account is now pending approval from a Lead Tutor.', 'success')
         return redirect(url_for('main.login'))
         
     return render_template('register_tutor.html', form=form)

@@ -79,9 +79,13 @@ def create_app():
     from tutor_routes import tutor as tutor_blueprint
     app.register_blueprint(tutor_blueprint)
     
-    # 3. Register the Admin Blueprint  <-- NEW LINES
+    # 3. Register the Admin Blueprint
     from admin_routes import admin as admin_blueprint
     app.register_blueprint(admin_blueprint)
+
+    # 4. Register the Lead Tutor Blueprint
+    from lead_tutor_routes import lead_tutor as lead_tutor_blueprint
+    app.register_blueprint(lead_tutor_blueprint)
 
     # ------------------------------------------------------------------
     # 5. DATABASE SETUP AND INITIAL DATA (Run once)
@@ -129,6 +133,33 @@ def initialize_data():
         admin_user.set_password('supersecurepassword123') 
         db.session.add(admin_user)
         print("Added default Admin user.")
+
+    # 4. Add a default Lead Tutor for verification
+    lead_tutor_username = 'leadtutor'
+    if not db.session.scalar(db.select(User).filter_by(username=lead_tutor_username)):
+        lead_tutor_user = User(
+            username=lead_tutor_username,
+            full_name='Lead Tutor Example',
+            email='leadtutor@test.com',
+            role=ROLES['Lead Tutor']
+        )
+        lead_tutor_user.set_password('password123')
+        db.session.add(lead_tutor_user)
+        print("Added default Lead Tutor user.")
+
+    # 5. Add a default pending Tutor for verification
+    pending_tutor_username = 'pendingtutor'
+    if not db.session.scalar(db.select(User).filter_by(username=pending_tutor_username)):
+        pending_tutor_user = User(
+            username=pending_tutor_username,
+            full_name='Pending Tutor Example',
+            email='pendingtutor@test.com',
+            role=ROLES['Tutor'],
+            tutor_status='pending'
+        )
+        pending_tutor_user.set_password('password123')
+        db.session.add(pending_tutor_user)
+        print("Added default Pending Tutor user.")
 
     db.session.commit()
     print("Database initialization complete.")
