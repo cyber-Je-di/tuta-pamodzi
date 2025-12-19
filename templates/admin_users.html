@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h1 class="h3">User Management</h1>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.full_name }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>
+                                {% if user.role == 'Tutor' %}
+                                    <span class="badge {% if user.tutor_status == 'approved' %}badge-success{% elif user.tutor_status == 'pending' %}badge-warning{% else %}badge-danger{% endif %}">
+                                        {{ user.tutor_status|capitalize }}
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.role == 'Tutor' %}
+                                    <form action="{{ url_for('admin.promote_to_lead_tutor', user_id=user.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-info">Promote to Lead Tutor</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

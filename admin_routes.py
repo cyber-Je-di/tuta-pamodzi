@@ -196,3 +196,24 @@ def manage_settings():
     form.commission_rate.data = setting.commission_rate * 100
     
     return render_template('admin_settings.html', form=form)
+
+## --- 5. USER MANAGEMENT ---
+@admin.route('/users')
+@admin_required
+def manage_users():
+    """Display a list of all users for management."""
+    users = User.query.order_by(User.role, User.full_name).all()
+    return render_template('admin_users.html', users=users)
+
+@admin.route('/user/<int:user_id>/promote', methods=['POST'])
+@admin_required
+def promote_to_lead_tutor(user_id):
+    """Promote a Tutor to a Lead Tutor."""
+    user = db.session.get(User, user_id)
+    if user and user.role == ROLES['Tutor']:
+        user.role = ROLES['Lead Tutor']
+        db.session.commit()
+        flash(f'{user.full_name} has been promoted to Lead Tutor.', 'success')
+    else:
+        flash('Invalid user or user is not a Tutor.', 'danger')
+    return redirect(url_for('admin.manage_users'))

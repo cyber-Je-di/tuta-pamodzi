@@ -7,6 +7,7 @@ from datetime import datetime
 # Utility for role checks (Requirement 1.1)
 ROLES = {
     'Admin': 'Admin',
+    'Lead Tutor': 'Lead Tutor',
     'Tutor': 'Tutor',
     'Student': 'Student'
 }
@@ -50,10 +51,11 @@ class User(UserMixin, db.Model):
         password_hash (str): The hashed password for the user.
         email (str): The user's unique email address.
         full_name (str): The user's full name.
-        role (str): The user's role, one of 'Admin', 'Tutor', or 'Student'.
+        role (str): The user's role, one of 'Admin', 'Lead Tutor', 'Tutor', or 'Student'.
+        tutor_status (str): The approval status for a tutor ('pending', 'approved', 'rejected').
         tutor_id (int): Foreign key linking a student to their tutor.
         university_id (int): Foreign key linking a student to their university.
-        is_approved (bool): A flag indicating if a student is approved by a tutor.
+        is_student_approved (bool): A flag indicating if a student is approved by a tutor.
         is_paid_current_month (bool): A flag indicating if a student has paid for the current month.
         created_at (datetime): The timestamp when the user was created.
     """
@@ -63,15 +65,16 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(120), unique=True)
     full_name = db.Column(db.String(120), nullable=False)
-    role = db.Column(db.String(20), nullable=False) # 'Admin', 'Tutor', or 'Student'
+    role = db.Column(db.String(20), nullable=False) # 'Admin', 'Lead Tutor', 'Tutor', or 'Student'
+    tutor_status = db.Column(db.String(20), nullable=False, default='approved') # Tutors will be 'pending' on registration
     
     # Relationships/Foreign Keys for Students
     tutor_id = db.Column(db.Integer, db.ForeignKey('Users.id')) # Student's assigned Tutor (Requirement 1.3.5)
     university_id = db.Column(db.Integer, db.ForeignKey('Universities.id')) # Student's university (Requirement 1.2.1)
     university = db.relationship('University', backref='students', lazy=True)
     
-    # Gated Access Statuses (Requirement 1.3.6)
-    is_approved = db.Column(db.Boolean, nullable=False, default=False) 
+    # Gated Access Statuses for Students (Requirement 1.3.6)
+    is_student_approved = db.Column(db.Boolean, nullable=False, default=False)
     is_paid_current_month = db.Column(db.Boolean, nullable=False, default=False)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -105,22 +108,26 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
         
     def is_content_authorized(self):
-        """Check if a student is authorized to access course content.
+        """Check if a user is authorized to access role-specific content.
 
-        Authorization for students requires two conditions to be met:
-        1. The student must be approved by their tutor (`is_approved`).
-        2. The student must have a recorded payment for the current month
-           (`is_paid_current_month`).
-
-        Admins and Tutors are always considered authorized.
+        - Students: Access requires both tutor approval (`is_student_approved`) and
+          a recorded payment for the current month (`is_paid_current_month`).
+        - Tutors & Lead Tutors: Access requires their account to be approved
+          (`tutor_status == 'approved'`).
+        - Admins: Always have access.
 
         Returns:
             bool: True if the user is authorized, False otherwise.
         """
         if self.role == ROLES['Student']:
-            # Access granted only if BOTH approved AND paid (Requirement 1.3.6)
-            return self.is_approved and self.is_paid_current_month
-        return True # Tutors/Admins always have access for their roles
+            # Access granted only if BOTH approved AND paid
+            return self.is_student_approved and self.is_paid_current_month
+
+        if self.role in [ROLES['Tutor'], ROLES['Lead Tutor']]:
+            # Tutors must be approved to access their dashboards and content
+            return self.tutor_status == 'approved'
+
+        return True # Admins always have access
 
 # ----------------------------------------------------------------------
 # 3. CONTENT HIERARCHY
@@ -201,6 +208,44 @@ class Document(db.Model):
 # ----------------------------------------------------------------------
 # 5. FINANCIAL TRACKING
 # ----------------------------------------------------------------------
+
+# class ProofOfPayment(db.Model):
+#     """Represents an uploaded proof of payment from a student.
+#
+#     This model stores the image file uploaded by a student as proof of a
+#     manual payment. Tutors can then review and approve these proofs to grant
+#     course access.
+#
+#     Attributes:
+#         id (int): Primary key.
+#         student_id (int): Foreign key for the student uploading the proof.
+#         tutor_id (int): Foreign key for the tutor who will receive the payment.
+#         course_id (int): Foreign key for the course being paid for.
+#         file_path (str): The path to the uploaded proof file.
+#         status (str): The current status ('pending', 'approved', 'rejected').
+#         upload_date (datetime): The timestamp of the upload.
+#         reviewed_by_id (int): Foreign key for the user who reviewed the proof.
+#         review_date (datetime): The timestamp of the review.
+#     """
+#     __tablename__ = 'ProofOfPayments'
+#     id = db.Column(db.Integer, primary_key=True)
+#     student_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
+#     tutor_id = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
+#     course_id = db.Column(db.Integer, db.ForeignKey('Courses.id'), nullable=False)
+#     file_path = db.Column(db.String(255), unique=True, nullable=False)
+#     status = db.Column(db.String(20), nullable=False, default='pending') # pending, approved, rejected
+#     upload_date = db.Column(db.DateTime, default=datetime.utcnow)
+#
+#     # Tracking who reviewed the proof
+#     reviewed_by_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
+#     review_date = db.Column(db.DateTime)
+#
+#     # Relationships
+#     student = db.relationship('User', foreign_keys=[student_id])
+#     tutor = db.relationship('User', foreign_keys=[tutor_id])
+#     course = db.relationship('Course', foreign_keys=[course_id])
+#     reviewed_by = db.relationship('User', foreign_keys=[reviewed_by_id])
+
 
 class Payment(db.Model):
     """Represents a payment recorded by a tutor for a student.
